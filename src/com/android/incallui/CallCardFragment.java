@@ -31,6 +31,8 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.kylin.location.PhoneLocation;
+import android.mokee.utils.MoKeeUtils;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -498,6 +500,11 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
 
         // set the name field.
         setPrimaryName(name, nameIsNumber);
+
+        if (MoKeeUtils.isSupportLanguage(false)) {
+            CharSequence locationLabel = PhoneLocation.getCityFromPhone(!nameIsNumber ? number : name);
+            label = (TextUtils.isEmpty(label) ? locationLabel : label + "  " + locationLabel).toString().trim();
+        }
 
         if (TextUtils.isEmpty(number) && TextUtils.isEmpty(label)) {
             mCallNumberAndLabel.setVisibility(View.GONE);
