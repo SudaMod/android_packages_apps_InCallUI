@@ -26,7 +26,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.kylin.location.PhoneLocation;
+import android.suda.location.PhoneLocation;
 import android.suda.utils.SudaUtils;
 import android.net.Uri;
 import android.os.Bundle;
