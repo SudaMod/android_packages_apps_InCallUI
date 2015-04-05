@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2015 The SudaMod Project 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +29,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.suda.location.PhoneLocation;
+import android.suda.utils.SudaUtils;
 import android.os.Handler;
 import android.os.Message;
 import android.telecom.PhoneAccount;
@@ -404,12 +407,23 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
                 && !call.can(android.telecom.Call.Details.CAPABILITY_GENERIC_CONFERENCE)) {
             return mContext.getResources().getString(R.string.card_title_conf_call);
         }
-        if (TextUtils.isEmpty(contactInfo.name)) {
-            return TextUtils.isEmpty(contactInfo.number) ? null
-                    : BidiFormatter.getInstance().unicodeWrap(
-                            contactInfo.number.toString(), TextDirectionHeuristics.LTR);
+        if (SudaUtils.isSupportLanguage(true)) {
+            CharSequence location = PhoneLocation.getCityFromPhone(contactInfo.number);
+            if (TextUtils.isEmpty(contactInfo.name)) {
+                if (!TextUtils.isEmpty(location)) {
+                    return contactInfo.number + " " + location;
+                }
+                return contactInfo.number;
+            }
+            return !TextUtils.isEmpty(location) ? contactInfo.name + " " + location : contactInfo.name;
+        } else {
+            if (TextUtils.isEmpty(contactInfo.name)) {
+                return TextUtils.isEmpty(contactInfo.number) ? null
+                        : BidiFormatter.getInstance().unicodeWrap(
+                                contactInfo.number.toString(), TextDirectionHeuristics.LTR);
+                }
+                return contactInfo.name;
         }
-        return contactInfo.name;
     }
 
     private void addPersonReference(Notification.Builder builder, ContactCacheEntry contactInfo,
