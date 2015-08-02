@@ -48,6 +48,10 @@ import com.android.incallui.ContactInfoCache.ContactInfoCacheCallback;
 import com.android.incallui.InCallApp.NotificationBroadcastReceiver;
 import com.android.incallui.InCallPresenter.InCallState;
 
+import com.android.dialer.DialerApplication;
+import com.a1os.cloud.phone.PhoneUtil.CallBack;
+
+
 /**
  * This class adds Notifications to the status bar for the in-call experience.
  */
@@ -408,14 +412,20 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
             return mContext.getResources().getString(R.string.card_title_conf_call);
         }
         if (SudaUtils.isSupportLanguage(true)) {
-            CharSequence location = PhoneLocation.getCityFromPhone(contactInfo.number);
+            final StringBuilder location = new StringBuilder();
+            DialerApplication.getPhoneUtil().getNumberInfo(contactInfo.number, new CallBack() {
+                    public void execute(String response) {
+                        location.append(SudaUtils.isSupportLanguage(true) ? response : "");
+                    }
+                }
+            );
             if (TextUtils.isEmpty(contactInfo.name)) {
-                if (!TextUtils.isEmpty(location)) {
-                    return contactInfo.number + " " + location;
+                if (!TextUtils.isEmpty(location.toString())) {
+                    return contactInfo.number + " " + location.toString();
                 }
                 return contactInfo.number;
             }
-            return !TextUtils.isEmpty(location) ? contactInfo.name + " " + location : contactInfo.name;
+            return !TextUtils.isEmpty(location.toString()) ? contactInfo.name + " " + location.toString() : contactInfo.name;
         } else {
             if (TextUtils.isEmpty(contactInfo.name)) {
                 return TextUtils.isEmpty(contactInfo.number) ? null

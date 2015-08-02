@@ -52,6 +52,9 @@ import com.android.incallui.InCallPresenter.InCallStateListener;
 import com.android.incallui.InCallPresenter.IncomingCallListener;
 import com.android.incalluibind.ObjectFactory;
 
+import com.android.dialer.DialerApplication;
+import com.a1os.cloud.phone.PhoneUtil.CallBack;
+
 import java.lang.ref.WeakReference;
 
 import com.google.common.base.Preconditions;
@@ -773,11 +776,17 @@ public class CallCardPresenter extends Presenter<CallCardPresenter.CallCardUi> i
         // If the name is empty, we use the number for the name...so dont show a second
         // number in the number field
         if (SudaUtils.isSupportLanguage(true)) {
-            CharSequence location = PhoneLocation.getCityFromPhone(contactInfo.number);
+            final StringBuilder location = new StringBuilder();
+            DialerApplication.getPhoneUtil().getNumberInfo(contactInfo.number, new CallBack() {
+                    public void execute(String response) {
+                        location.append(SudaUtils.isSupportLanguage(true) ? response : "");
+                    }
+                }
+            );
             if (TextUtils.isEmpty(contactInfo.name)) {
-                return String.valueOf(location);
+                return String.valueOf(location.toString());
             }
-            return !TextUtils.isEmpty(location) ? location + " " + contactInfo.number : contactInfo.number;
+            return !TextUtils.isEmpty(location.toString()) ? location.toString() + " " + contactInfo.number : contactInfo.number;
         } else {
             if (TextUtils.isEmpty(contactInfo.name)) {
                 return contactInfo.location;
