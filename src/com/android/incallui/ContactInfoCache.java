@@ -41,6 +41,10 @@ import com.google.common.collect.Sets;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.android.dialer.DialerApplication;
+import com.a1os.cloud.phone.PhoneUtil.CallBack;
+import android.suda.utils.SudaUtils;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -431,13 +435,13 @@ public class ContactInfoCache implements ContactsAsyncHelper.OnImageLoadComplete
 
                     // Display a geographical description string if available
                     // (but only for incoming calls.)
-                    if (isIncoming) {
+                    // if (isIncoming) {
                         // TODO (CallerInfoAsyncQuery cleanup): Fix the CallerInfo
                         // query to only do the geoDescription lookup in the first
                         // place for incoming calls.
                         displayLocation = info.geoDescription; // may be null
                         Log.d(TAG, "Geodescrption: " + info.geoDescription);
-                    }
+                    // }
 
                     Log.d(TAG, "  ==>  no name; falling back to number:"
                             + " displayNumber '" + Log.pii(displayNumber)
@@ -456,15 +460,32 @@ public class ContactInfoCache implements ContactsAsyncHelper.OnImageLoadComplete
                 } else {
                     displayName = info.name;
                     displayNumber = number;
+                    displayLocation = info.geoDescription;
                     label = info.phoneLabel;
                     Log.d(TAG, "  ==>  name is present in CallerInfo: displayName '" + displayName
-                            + "', displayNumber '" + displayNumber + "'");
+                            + "', displayNumber '" + displayNumber + "'" + "', displayLocation '" + displayLocation + "'");
                 }
             }
 
         cce.name = displayName;
         cce.number = displayNumber;
-        cce.location = displayLocation;
+        if (!isSipCall && !TextUtils.isEmpty(cce.number)) {
+            final StringBuilder location = new StringBuilder();
+            DialerApplication.getPhoneUtil().getNumberInfo(cce.number, new CallBack() {
+                    public void execute(String response) {
+                        location.append(SudaUtils.isSupportLanguage(true) ? response : "");
+                    }
+                }
+            );
+            if (!TextUtils.isEmpty(location.toString())) {
+                info.geoDescription = location.toString();
+                cce.location = info.geoDescription;
+            } else {
+               cce.location = displayLocation;
+            }
+        } else {
+            cce.location = displayLocation;
+        }
         cce.label = label;
         cce.isSipCall = isSipCall;
 

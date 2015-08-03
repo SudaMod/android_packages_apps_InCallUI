@@ -52,9 +52,6 @@ import com.android.incallui.InCallPresenter.InCallStateListener;
 import com.android.incallui.InCallPresenter.IncomingCallListener;
 import com.android.incalluibind.ObjectFactory;
 
-import com.android.dialer.DialerApplication;
-import com.a1os.cloud.phone.PhoneUtil.CallBack;
-
 import java.lang.ref.WeakReference;
 
 import com.google.common.base.Preconditions;
@@ -84,6 +81,9 @@ public class CallCardPresenter extends Presenter<CallCardPresenter.CallCardUi> i
     private ContactCacheEntry mSecondaryContactInfo;
     private CallTimer mCallTimer;
     private Context mContext;
+
+    private static boolean isSupportLanguage;
+
     private AudioManager mAudioManager;
 
     public static class ContactLookupCallback implements ContactInfoCacheCallback {
@@ -155,6 +155,8 @@ public class CallCardPresenter extends Presenter<CallCardPresenter.CallCardUi> i
         InCallPresenter.getInstance().addDetailsListener(this);
         InCallPresenter.getInstance().addInCallEventListener(this);
         AudioModeProvider.getInstance().addListener(this);
+
+        isSupportLanguage = SudaUtils.isSupportLanguage(true);
     }
 
     @Override
@@ -585,7 +587,9 @@ public class CallCardPresenter extends Presenter<CallCardPresenter.CallCardUi> i
                     checkIdpName,
                     nameIsNumber,
                     isForwarded,
-                    mPrimaryContactInfo.label,
+                    isSupportLanguage ? TextUtils.isEmpty(mPrimaryContactInfo.label) ? mPrimaryContactInfo.location :
+                        TextUtils.isEmpty(mPrimaryContactInfo.location) ? mPrimaryContactInfo.label : mPrimaryContactInfo.label + " "
+                            + mPrimaryContactInfo.location : mPrimaryContactInfo.label,
                     mPrimaryContactInfo.photo,
                     mPrimaryContactInfo.isSipCall,
                     mPrimaryContactInfo.nickName,
@@ -775,24 +779,14 @@ public class CallCardPresenter extends Presenter<CallCardPresenter.CallCardUi> i
     private static String getNumberForCall(ContactCacheEntry contactInfo) {
         // If the name is empty, we use the number for the name...so dont show a second
         // number in the number field
-        if (SudaUtils.isSupportLanguage(true)) {
-            final StringBuilder location = new StringBuilder();
-            DialerApplication.getPhoneUtil().getNumberInfo(contactInfo.number, new CallBack() {
-                    public void execute(String response) {
-                        location.append(SudaUtils.isSupportLanguage(true) ? response : "");
-                    }
-                }
-            );
-            if (TextUtils.isEmpty(contactInfo.name)) {
-                return String.valueOf(location.toString());
-            }
-            return !TextUtils.isEmpty(location.toString()) ? location.toString() + " " + contactInfo.number : contactInfo.number;
-        } else {
-            if (TextUtils.isEmpty(contactInfo.name)) {
+        if (TextUtils.isEmpty(contactInfo.name)) {
+            if (!isSupportLanguage) {
                 return contactInfo.location;
+            } else {
+                return "";
             }
-            return contactInfo.number;
         }
+        return contactInfo.number;
     }
 
     public void secondaryInfoClicked() {
