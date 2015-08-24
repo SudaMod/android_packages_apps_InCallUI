@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.android.dialer.DialerApplication;
+import com.a1os.cloud.phone.PhoneUtil;
 import android.suda.utils.SudaUtils;
 
 import java.util.HashMap;
@@ -469,7 +469,7 @@ public class ContactInfoCache implements ContactsAsyncHelper.OnImageLoadComplete
         cce.name = displayName;
         cce.number = displayNumber;
         if (!isSipCall && !TextUtils.isEmpty(cce.number)) {
-            String location = DialerApplication.getPhoneUtil().getLocalNumberInfo(cce.number);
+            String location = PhoneUtil.getPhoneUtil(null).getLocalNumberInfo(cce.number);
             if (!TextUtils.isEmpty(location)) {
                 info.geoDescription = location;
                 cce.location = info.geoDescription;
