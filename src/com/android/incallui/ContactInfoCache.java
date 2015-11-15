@@ -46,6 +46,9 @@ import com.google.common.collect.Sets;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.suda.cloud.phone.PhoneUtil;
+import android.suda.utils.SudaUtils;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -499,7 +502,13 @@ public class ContactInfoCache implements ContactsAsyncHelper.OnImageLoadComplete
 
         cce.name = displayName;
         cce.number = displayNumber;
-        cce.location = displayLocation;
+        String location = PhoneUtil.getPhoneUtil(null).getLocalNumberInfo(cce.number, false);
+        if (!TextUtils.isEmpty(location)) {
+            info.geoDescription = location;
+            cce.location = info.geoDescription;
+        } else {
+            cce.location = displayLocation;
+        }
         cce.label = label;
         cce.isSipCall = isSipCall;
     }
