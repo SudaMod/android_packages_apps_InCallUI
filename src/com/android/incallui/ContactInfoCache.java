@@ -74,9 +74,12 @@ public class ContactInfoCache implements ContactsAsyncHelper.OnImageLoadComplete
     private Drawable mDefaultContactPhotoDrawable;
     private Drawable mConferencePhotoDrawable;
 
+    private Context mCt;
+
     public static synchronized ContactInfoCache getInstance(Context mContext) {
         if (sCache == null) {
             sCache = new ContactInfoCache(mContext.getApplicationContext());
+            mCt = mContext;
         }
         return sCache;
     }
@@ -502,7 +505,7 @@ public class ContactInfoCache implements ContactsAsyncHelper.OnImageLoadComplete
 
         cce.name = displayName;
         cce.number = displayNumber;
-        String location = PhoneUtil.getPhoneUtil(null).getLocalNumberInfo(cce.number, false);
+        String location = PhoneUtil.getPhoneUtil(mCt).getLocalNumberInfo(cce.number, false);
         if (!TextUtils.isEmpty(location)) {
             info.geoDescription = location;
             cce.location = info.geoDescription;
