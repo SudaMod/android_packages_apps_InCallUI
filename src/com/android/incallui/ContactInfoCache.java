@@ -63,7 +63,7 @@ public class ContactInfoCache implements ContactsAsyncHelper.OnImageLoadComplete
     private static final String TAG = ContactInfoCache.class.getSimpleName();
     private static final int TOKEN_UPDATE_PHOTO_FOR_CALL_STATE = 0;
 
-    private static final Context mContext;
+    private static Context mContext;
     private final PhoneNumberService mPhoneNumberService;
     private final CachedNumberLookupService mCachedNumberLookupService;
     private final HashMap<String, ContactCacheEntry> mInfoMap = Maps.newHashMap();
