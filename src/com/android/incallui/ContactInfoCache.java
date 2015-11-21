@@ -66,7 +66,7 @@ public class ContactInfoCache implements ContactsAsyncHelper.OnImageLoadComplete
         StructuredPostal.CITY
     };
 
-    private final Context mContext;
+    private static Context mContext;
     private final PhoneNumberService mPhoneNumberService;
     private final HashMap<String, ContactCacheEntry> mInfoMap = Maps.newHashMap();
     private final HashMap<String, Set<ContactInfoCacheCallback>> mCallBacks = Maps.newHashMap();
