@@ -48,6 +48,10 @@ import com.android.incallui.ContactInfoCache.ContactInfoCacheCallback;
 import com.android.incallui.InCallApp.NotificationBroadcastReceiver;
 import com.android.incallui.InCallPresenter.InCallState;
 
+import com.a1os.cloud.phone.PhoneUtil;
+import com.a1os.cloud.phone.PhoneUtil.CallBack;
+import android.suda.utils.SudaUtils;
+
 /**
  * This class adds Notifications to the status bar for the in-call experience.
  */
@@ -98,6 +102,7 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
         }
     };
 
+    private static PhoneUtil mPu;
     private final Context mContext;
     private final ContactInfoCache mContactInfoCache;
     private final NotificationManager mNotificationManager;
@@ -111,6 +116,7 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
     public StatusBarNotifier(Context context, ContactInfoCache contactInfoCache) {
         Preconditions.checkNotNull(context);
 
+        mPu = PhoneUtil.getPhoneUtil(context);
         mContext = context;
         mContactInfoCache = contactInfoCache;
         mNotificationManager =
@@ -248,9 +254,19 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
         // call into the contacts provider for more data.
         mContactInfoCache.findInfo(call, isIncoming, new ContactInfoCacheCallback() {
             @Override
-            public void onContactInfoComplete(String callId, ContactCacheEntry entry) {
-                Call call = CallList.getInstance().getCallById(callId);
+            public void onContactInfoComplete(String callId, final ContactCacheEntry entry) {
+                final Call call = CallList.getInstance().getCallById(callId);
                 if (call != null) {
+		    if(TextUtils.isEmpty(entry.name)) {
+		        if (SudaUtils.isSupportLanguage(true) && !TextUtils.isEmpty(entry.number.toString())) {
+		            mPu.getOnlineNumberInfo(entry.number.toString(), new CallBack() {
+		                public void execute(String response) {
+                                    entry.location = response;
+		                    buildAndSendNotification(call, entry);
+		                }
+		            });
+                        }
+                    }
                     buildAndSendNotification(call, entry);
                 }
             }
