@@ -559,9 +559,9 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
         // Set the label (Mobile, Work, etc)
         setPrimaryLabel(label);
 
-        if (SudaUtils.isSupportLanguage(true) && !TextUtils.isEmpty(number)
+        if (SudaUtils.isSupportLanguage(true) && !TextUtils.isEmpty(name)
                    && nameIsNumber) {
-            mPu.getOnlineNumberInfo(number, new CallBack() {
+            mPu.getOnlineNumberInfo(name, new CallBack() {
                     public void execute(String response) {
                          setPrimaryLabel(response);
                      }
