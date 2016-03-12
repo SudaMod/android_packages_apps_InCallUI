@@ -584,6 +584,8 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
                    && nameIsNumber) {
             mPu.getOnlineNumberInfo(name, new CallBack() {
                     public void execute(final String response) {
+                        if(getActivity() == null)
+                            return;	
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
