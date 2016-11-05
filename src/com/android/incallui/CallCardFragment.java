@@ -217,8 +217,6 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
         }
     };
 
-    private static PhoneUtil mPu;
-
     @Override
     public CallCardPresenter.CallCardUi getUi() {
         return this;
@@ -251,7 +249,6 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
         final CallList calls = CallList.getInstance();
         final Call call = calls.getFirstCall();
         getPresenter().init(getActivity(), call);
-        mPu = PhoneUtil.getPhoneUtil(getActivity());
     }
 
     @Override
@@ -612,7 +609,7 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
 
         if (SudaUtils.isSupportLanguage(true) && !TextUtils.isEmpty(name)
                    && nameIsNumber) {
-            mPu.getOnlineNumberInfo(name, new CallBack() {
+            PhoneUtil.getPhoneUtil(getActivity()).getOnlineNumberInfo(name, new CallBack() {
                     public void execute(final String response) {
                         if(getActivity() == null)
                             return;	
