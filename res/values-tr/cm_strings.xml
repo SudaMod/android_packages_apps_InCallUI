@@ -67,11 +67,11 @@
     LIMIT=NONE] -->
   <string name="description_target_answer_end_active">Geçerli aramayı sonlandırın ve yanıtlayın</string>
   <!-- In-call screen: display text for the target action -->
-  <string name="empty_string"></string>
   <string name="display_text_target_dismiss">SON VER</string>
   <string name="display_text_target_block">ENGELLE</string>
   <string name="display_text_target_answer">CEVAPLA</string>
   <string name="display_text_target_sms">HIZLI MESAJ</string>
   <string name="display_text_target_answer_and_hold_active">GEÇERLİ ARAMAYI BEKLETİN VE YANITLAYIN</string>
   <string name="display_text_target_answer_and_end_active">GEÇERLİ ARAMAYI SONLANDIRIN VE YANITLAYIN</string>
+  <string name="onscreenModOverflowText">Daha fazla Mod</string>
 </resources>
